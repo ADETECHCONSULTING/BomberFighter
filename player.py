@@ -15,7 +15,6 @@ class Player(object):
         self.left = False
         self.walkCount = 0
         self.standing = True
-        self.bombs = []
         self.playerNumber = playerNumber
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
@@ -31,8 +30,6 @@ class Player(object):
         self.stay = pygame.image.load('images/standing.png')
 
     def draw(self, window):
-        for bomb in self.bombs:
-            bomb.draw(window)
 
         if self.walkCount + 1 >= 27:  # because 27 frames per seconds
             self.walkCount = 0
@@ -51,20 +48,10 @@ class Player(object):
             else:
                 window.blit(self.walkLeft[0], (self.x, self.y))
 
-
     def update(self, keys, screenWidth):
-        for bomb in self.bombs:
-            if bomb.x < 500 and bomb.x > 0:
-                bomb.x += bomb.velocity
-            else:
-                self.bombs.pop(self.bombs.index(bomb))
+
 
         if self.playerNumber == 1:
-            if keys[pygame.K_SPACE]:
-
-                if len(self.bombs) < 5:
-                    bmb = bomb.Bomb(round(self.x), round(self.y), 6, (0,0,0,0), 1)
-                    self.bombs.append(bmb)
 
             if keys[pygame.K_LEFT] and self.x > self.velocity:
                 self.x -= self.velocity
@@ -97,12 +84,6 @@ class Player(object):
                     self.jumpHeight = 10
 
         else:
-            if keys[pygame.K_KP_ENTER]:
-
-                if len(self.bombs) < 5:
-                    bmb = bomb.Bomb(round(self.x), round(self.y), 6, (0,0,0,0), 1)
-                    self.bombs.append(bmb)
-
             if keys[pygame.K_q] and self.x > self.velocity:
                 self.x -= self.velocity
                 self.left = True
