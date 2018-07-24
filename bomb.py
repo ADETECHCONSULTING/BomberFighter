@@ -23,4 +23,4 @@ class Bomb(object):
                          (self.x, self.y - 20 - (40 * self.bombRange)), 40)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (200, 0, 0), (self.x, self.y), 20)
+        pygame.draw.circle(screen, (0, 0, 0), (self.x, self.y), 20)

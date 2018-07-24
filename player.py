@@ -70,7 +70,7 @@ class Player(object):
                 self.walkCount = 0
 
             if not (self.isJumping):
-                if keys[pygame.K_SPACE]:
+                if keys[pygame.K_UP]:
                     self.isJumping = True
             else:
                 if self.jumpHeight >= -10:
@@ -84,7 +84,7 @@ class Player(object):
                     self.jumpHeight = 10
 
         else:
-            if keys[pygame.K_q] and self.x > self.velocity:
+            if keys[pygame.K_a] and self.x > self.velocity:
                 self.x -= self.velocity
                 self.left = True
                 self.right = False
@@ -101,7 +101,7 @@ class Player(object):
                 self.walkCount = 0
 
             if not (self.isJumping):
-                if keys[pygame.K_s]:
+                if keys[pygame.K_w]:
                     self.isJumping = True
             else:
                 if self.jumpHeight >= -10:
