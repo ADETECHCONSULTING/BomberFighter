@@ -12,13 +12,15 @@ window = pygame.display.set_mode((screenWidth,screenHeight))
 bg = pygame.image.load('images/background.png')
 
 clock = pygame.time.Clock()
-man = player.Player(50, 410, 64, 64)
+player1 = player.Player(50, 410, 64, 64, 1)
+player2 = player.Player(700, 410, 64, 64, 2)
 
 
 def redrawGameWindow():
     global walkCount
     window.blit(bg, (0,0))
-    man.draw(window)
+    player1.draw(window)
+    player2.draw(window)
 
     pygame.display.update()
 
@@ -34,8 +36,8 @@ while running:
 
     keys = pygame.key.get_pressed()
 
-
-    man.update(keys, screenWidth)
+    player1.update(keys, screenWidth)
+    player2.update(keys, screenWidth)
 
     redrawGameWindow()
 

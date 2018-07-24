@@ -3,7 +3,7 @@ import bomb
 
 class Player(object):
 
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, playerNumber):
         self.x = x
         self.y = y
         self.width = width
@@ -16,6 +16,7 @@ class Player(object):
         self.walkCount = 0
         self.standing = True
         self.bombs = []
+        self.playerNumber = playerNumber
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
                      pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
@@ -52,44 +53,82 @@ class Player(object):
 
 
     def update(self, keys, screenWidth):
-
         for bomb in self.bombs:
             if bomb.x < 500 and bomb.x > 0:
                 bomb.x += bomb.velocity
             else:
                 self.bombs.pop(self.bombs.index(bomb))
 
-        if keys[pygame.K_SPACE]:
-
-            if len(self.bombs) < 5:
-                self.bombs.append(bomb.Bomb(self.x, self.y, 6, (0,0,0,0), 1))
-
-        if keys[pygame.K_LEFT] and self.x > self.velocity:
-            self.x -= self.velocity
-            self.left = True
-            self.right = False
-            self.standing = False
-
-        elif keys[pygame.K_RIGHT] and self.x < screenWidth - self.width - self.velocity:
-            self.x += self.velocity
-            self.left = False
-            self.right = True
-            self.standing = False
-
-        else:
-            self.standing = True
-            self.walkCount = 0
-
-        if not (self.isJumping):
+        if self.playerNumber == 1:
             if keys[pygame.K_SPACE]:
-                self.isJumping = True
-        else:
-            if self.jumpHeight >= -10:
-                neg = 1
-                if self.jumpHeight < 0:
-                    neg = -1
-                self.y -= (self.jumpHeight ** 2) * 0.5 * neg
-                self.jumpHeight -= 1
+
+                if len(self.bombs) < 5:
+                    bmb = bomb.Bomb(round(self.x), round(self.y), 6, (0,0,0,0), 1)
+                    self.bombs.append(bmb)
+
+            if keys[pygame.K_LEFT] and self.x > self.velocity:
+                self.x -= self.velocity
+                self.left = True
+                self.right = False
+                self.standing = False
+
+            elif keys[pygame.K_RIGHT] and self.x < screenWidth - self.width - self.velocity:
+                self.x += self.velocity
+                self.left = False
+                self.right = True
+                self.standing = False
+
             else:
-                self.isJumping = False
-                self.jumpHeight = 10
+                self.standing = True
+                self.walkCount = 0
+
+            if not (self.isJumping):
+                if keys[pygame.K_SPACE]:
+                    self.isJumping = True
+            else:
+                if self.jumpHeight >= -10:
+                    neg = 1
+                    if self.jumpHeight < 0:
+                        neg = -1
+                    self.y -= (self.jumpHeight ** 2) * 0.5 * neg
+                    self.jumpHeight -= 1
+                else:
+                    self.isJumping = False
+                    self.jumpHeight = 10
+
+        else:
+            if keys[pygame.K_KP_ENTER]:
+
+                if len(self.bombs) < 5:
+                    bmb = bomb.Bomb(round(self.x), round(self.y), 6, (0,0,0,0), 1)
+                    self.bombs.append(bmb)
+
+            if keys[pygame.K_q] and self.x > self.velocity:
+                self.x -= self.velocity
+                self.left = True
+                self.right = False
+                self.standing = False
+
+            elif keys[pygame.K_d] and self.x < screenWidth - self.width - self.velocity:
+                self.x += self.velocity
+                self.left = False
+                self.right = True
+                self.standing = False
+
+            else:
+                self.standing = True
+                self.walkCount = 0
+
+            if not (self.isJumping):
+                if keys[pygame.K_s]:
+                    self.isJumping = True
+            else:
+                if self.jumpHeight >= -10:
+                    neg = 1
+                    if self.jumpHeight < 0:
+                        neg = -1
+                    self.y -= (self.jumpHeight ** 2) * 0.5 * neg
+                    self.jumpHeight -= 1
+                else:
+                    self.isJumping = False
+                    self.jumpHeight = 10
