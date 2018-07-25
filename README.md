@@ -17,3 +17,14 @@
 
 ### To run it
     python firstGame.py
+
+### keyboard 
+  - Player 1 :
+    ARROW_UP = Jump
+    ARROW_DOWN = Shoot
+    ARROW_LEFT & ARROW_RIGHT = MOVE
+
+  - Player 2 :
+    Z = Jump
+    S = Shoot
+    Q & D = MOVE
