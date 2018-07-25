@@ -15,6 +15,7 @@ class Player(object):
         self.left = False
         self.walkCount = 0
         self.standing = True
+        self.bombs = []
         self.playerNumber = playerNumber
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
@@ -48,10 +49,32 @@ class Player(object):
             else:
                 window.blit(self.walkLeft[0], (self.x, self.y))
 
-    def update(self, keys, screenWidth):
+    def update(self, keys, screenWidth, window):
 
+        for bmb in self.bombs:
+            if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
+                bmb.x += bmb.velocity
+                bmb.update(50)
+                if bmb.timeToExplode == 0:
+                    bmb.explode(window)
+            else:
+                self.bombs.pop(self.bombs.index(bmb))
 
         if self.playerNumber == 1:
+            if keys[pygame.K_SPACE]:
+                facing = 1
+                if self.left:
+                    facing = -1
+
+                if len(self.bombs) < 5:
+                    self.bombs.append(
+                        bomb.Bomb(int(self.x + self.width // 2), int(self.y + self.height // 2), facing, 10,
+                                  self.playerNumber))
+
+            if keys[pygame.KMOD_CTRL]:
+                for bomb_explode in self.bombs:
+                    if bomb_explode.player == self.playerNumber:
+                        bomb_explode.explode(window)
 
             if keys[pygame.K_LEFT] and self.x > self.velocity:
                 self.x -= self.velocity
@@ -84,6 +107,16 @@ class Player(object):
                     self.jumpHeight = 10
 
         else:
+            facing = 1
+            if self.left:
+                facing = -1
+
+            if keys[pygame.K_s]:
+                if len(self.bombs) < 5:
+                    self.bombs.append(
+                        bomb.Bomb(int(self.x + self.width // 2), int(self.y + self.height // 2), facing, 10,
+                                  self.playerNumber))
+
             if keys[pygame.K_a] and self.x > self.velocity:
                 self.x -= self.velocity
                 self.left = True

@@ -23,8 +23,12 @@ def redrawGameWindow():
     player1.draw(window)
     player2.draw(window)
 
-    for bomb in bombs:
+    for bomb in player1.bombs:
         bomb.draw(window)
+
+    for bomb in player2.bombs:
+        bomb.draw(window)
+
     pygame.display.update()
 
 
@@ -38,44 +42,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    for bmb in bombs:
-        if bmb.x < 500 and bmb.x > 0:
-            bmb.x += bmb.velocity
-        else:
-            bombs.pop(bombs.index(bmb))
-
     keys = pygame.key.get_pressed()
-
-    if player1.playerNumber == 1:
-        if keys[pygame.K_SPACE]:
-            facing = 1
-            if player1.left:
-                facing = -1
-
-            if len(bombs) < 5:
-                bombs.append(bomb.Bomb(int(player1.x + player1.width //2), int(player1.y + player1.height //2), facing, 10, player1.playerNumber))
-
-        if keys[pygame.KMOD_CTRL]:
-            for bomb_explode in bombs:
-                if bomb_explode.player == player1.playerNumber:
-                    bomb_explode.explode(window)
-
-    if player2.playerNumber == 2:
-        facing = 1
-        if player2.left:
-            facing = -1
-
-        if keys[pygame.K_s]:
-            if len(bombs) < 5:
-                bombs.append(bomb.Bomb(int(player2.x + player2.width //2), int(player2.y + player2.height //2), facing, 10, player2.playerNumber))
 
     if keys[pygame.KMOD_CTRL]:
             for bomb_explode in bombs:
                 if bomb_explode.player == player2.playerNumber:
                     bomb_explode.explode(window)
 
-    player1.update(keys, screenWidth)
-    player2.update(keys, screenWidth)
+    player1.update(keys, screenWidth,window)
+    player2.update(keys, screenWidth,window)
 
     redrawGameWindow()
 
