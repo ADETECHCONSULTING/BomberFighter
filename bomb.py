@@ -2,7 +2,7 @@ import pygame
 
 
 class Bomb(object):
-    def __init__(self, x, y, facing, radius, player, bombRange=5):
+    def __init__(self, x, y, facing, radius, player, bombRange=3):
         self.x = x
         self.y = y
         self.facing = facing

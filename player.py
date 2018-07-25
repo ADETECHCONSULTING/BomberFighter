@@ -51,16 +51,16 @@ class Player(object):
 
     def update(self, keys, screenWidth, window):
 
-        for bmb in self.bombs:
-            if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
-                bmb.x += bmb.velocity
-                bmb.update(50)
-                if bmb.timeToExplode == 0:
-                    bmb.explode(window)
-            else:
-                self.bombs.pop(self.bombs.index(bmb))
-
         if self.playerNumber == 1:
+            for bmb in self.bombs:
+                if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
+                    bmb.x += bmb.velocity
+                    bmb.update(50)
+                    if bmb.timeToExplode == 0:
+                        bmb.explode(window)
+                else:
+                    self.bombs.pop(self.bombs.index(bmb))
+
             if keys[pygame.K_SPACE]:
                 facing = 1
                 if self.left:
@@ -107,15 +107,24 @@ class Player(object):
                     self.jumpHeight = 10
 
         else:
+            for bmb in self.bombs:
+                if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
+                    bmb.x += bmb.velocity
+                    bmb.update(50)
+                    if bmb.timeToExplode == 0:
+                        bmb.explode(window)
+                else:
+                    self.bombs.pop(self.bombs.index(bmb))
+
             facing = 1
             if self.left:
                 facing = -1
 
             if keys[pygame.K_s]:
+                intx = int(self.x + self.width // 2)
+                inty = int(self.y + self.height // 2)
                 if len(self.bombs) < 5:
-                    self.bombs.append(
-                        bomb.Bomb(int(self.x + self.width // 2), int(self.y + self.height // 2), facing, 10,
-                                  self.playerNumber))
+                    self.bombs.append(bomb.Bomb(intx, inty, facing, 10, self.playerNumber))
 
             if keys[pygame.K_a] and self.x > self.velocity:
                 self.x -= self.velocity
