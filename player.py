@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.playerNumber = playerNumber
         self.hitbox = (self.x + 20, self.y, 28, 60)
         self.__versus_player = versus_player
+        self.shootLoop = 0
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
                      pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
@@ -67,12 +68,20 @@ class Player(pygame.sprite.Sprite):
     def update(self, keys, screenWidth, window):
 
         if self.playerNumber == 1:
+
+            #basic timer pour les shoots un par un
+            if self.shootLoop > 0:
+                self.shootLoop += 1
+            if self.shootLoop > 5:
+                self.shootLoop = 0
+
             for bmb in self.bombs:
 
                 if self.__versus_player != None:
                     if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
                         if bmb.x + bmb.radius > self.__versus_player.hitbox[0] and bmb.x - bmb.radius < self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
                             self.__versus_player.hit()
+                            self.bombs.pop(self.bombs.index(bmb))
 
                 if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
                     bmb.x += bmb.velocity
@@ -82,7 +91,7 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.bombs.pop(self.bombs.index(bmb))
 
-            if keys[pygame.K_DOWN]:
+            if keys[pygame.K_DOWN] and self.shootLoop == 0:
                 facing = 1
                 if self.left:
                     facing = -1
@@ -91,6 +100,8 @@ class Player(pygame.sprite.Sprite):
                     self.bombs.append(
                         bomb.Bomb(int(self.x + self.width // 2), int(self.y + self.height // 2), facing, 10,
                                   self.playerNumber))
+
+                self.shootLoop = 1
 
             if keys[pygame.KMOD_CTRL]:
                 for bomb_explode in self.bombs:
