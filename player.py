@@ -1,9 +1,9 @@
 import pygame
 import bomb
 
-class Player(object):
+class Player(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, width, height, playerNumber):
+    def __init__(self, x, y, width, height, playerNumber, versus_player = None):
         self.x = x
         self.y = y
         self.width = width
@@ -17,6 +17,8 @@ class Player(object):
         self.standing = True
         self.bombs = []
         self.playerNumber = playerNumber
+        self.hitbox = (self.x + 20, self.y, 28, 60)
+        self.__versus_player = versus_player
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
                      pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
@@ -29,6 +31,12 @@ class Player(object):
                     pygame.image.load('images/L7.png'), pygame.image.load('images/L8.png'),
                     pygame.image.load('images/L9.png')]
         self.stay = pygame.image.load('images/standing.png')
+
+    def get_versus_player(self):
+        return self.__versus_player
+
+    def set_versus_player(self, versus_player):
+        self.__versus_player = versus_player
 
     def draw(self, window):
 
@@ -49,10 +57,23 @@ class Player(object):
             else:
                 window.blit(self.walkLeft[0], (self.x, self.y))
 
+        self.hitbox = (self.x + 20, self.y, 28, 60)
+        pygame.draw.rect(window, (255,0,0,0), self.hitbox, 2)
+
+
+    def hit(self):
+        print("hit")
+
     def update(self, keys, screenWidth, window):
 
         if self.playerNumber == 1:
             for bmb in self.bombs:
+
+                if self.__versus_player != None:
+                    if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
+                        if bmb.x + bmb.radius > self.__versus_player.hitbox[0] and bmb.x - bmb.radius < self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
+                            self.__versus_player.hit()
+
                 if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
                     bmb.x += bmb.velocity
                     bmb.update(50)

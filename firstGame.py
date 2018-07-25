@@ -15,6 +15,8 @@ bg = pygame.image.load('images/background.png')
 clock = pygame.time.Clock()
 player1 = player.Player(50, 410, 64, 64, 1)
 player2 = player.Player(700, 410, 64, 64, 2)
+player1.set_versus_player(player2)
+player2.set_versus_player(player1)
 
 
 def redrawGameWindow():
