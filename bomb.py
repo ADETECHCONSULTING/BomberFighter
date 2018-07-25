@@ -1,7 +1,7 @@
 import pygame
 
 
-class Bomb(pygame.sprite.Sprite):
+class Bomb(object):
     def __init__(self, x, y, facing, radius, player, bombRange=5):
         self.x = x
         self.y = y

@@ -1,7 +1,7 @@
 import pygame
 import bomb
 
-class Player(pygame.sprite.Sprite):
+class Player(object):
 
     def __init__(self, x, y, width, height, playerNumber, versus_player = None):
         self.x = x
@@ -20,6 +20,9 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = (self.x + 20, self.y, 28, 60)
         self.__versus_player = versus_player
         self.shootLoop = 0
+        self.health = 10
+        self.visible = True
+
 
         self.walkRight = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
                      pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
@@ -40,29 +43,35 @@ class Player(pygame.sprite.Sprite):
         self.__versus_player = versus_player
 
     def draw(self, window):
+        if self.visible:
+            if self.walkCount + 1 >= 27:  # because 27 frames per seconds
+                self.walkCount = 0
 
-        if self.walkCount + 1 >= 27:  # because 27 frames per seconds
-            self.walkCount = 0
+            if not self.standing:
+                if self.left:
+                    window.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
+                    self.walkCount += 1
 
-        if not self.standing:
-            if self.left:
-                window.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
-                self.walkCount += 1
-
-            elif self.right:
-                window.blit(self.walkRight[self.walkCount // 3], (self.x, self.y))
-                self.walkCount += 1
-        else:
-            if self.right:
-                window.blit(self.walkRight[0], (self.x, self.y))
+                elif self.right:
+                    window.blit(self.walkRight[self.walkCount // 3], (self.x, self.y))
+                    self.walkCount += 1
             else:
-                window.blit(self.walkLeft[0], (self.x, self.y))
+                if self.right:
+                    window.blit(self.walkRight[0], (self.x, self.y))
+                else:
+                    window.blit(self.walkLeft[0], (self.x, self.y))
 
-        self.hitbox = (self.x + 20, self.y, 28, 60)
-        pygame.draw.rect(window, (255,0,0,0), self.hitbox, 2)
+            self.hitbox = (self.x + 20, self.y, 28, 60)
+            pygame.draw.rect(window, (255, 0,0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10))
+            pygame.draw.rect(window, (0, 255,0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (5 * (10 - self.health)), 10))
+            #pygame.draw.rect(window, (255,0,0,0), self.hitbox, 2)
 
 
     def hit(self):
+        if self.health > 0:
+            self.health -= 1
+        else:
+            self.visible = False
         print("hit")
 
     def update(self, keys, screenWidth, window):
@@ -78,15 +87,21 @@ class Player(pygame.sprite.Sprite):
             for bmb in self.bombs:
 
                 if self.__versus_player != None:
-                    if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
-                        if bmb.x + bmb.radius > self.__versus_player.hitbox[0] and bmb.x - bmb.radius < self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
-                            self.__versus_player.hit()
-                            self.bombs.pop(self.bombs.index(bmb))
+                    if bmb.timeToExplode <= 0:
+                        if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
+                            if bmb.x + (40 * 5) > self.__versus_player.hitbox[0] and bmb.x - (40 * 5) < self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
+                                self.__versus_player.hit()
+                                self.bombs.pop(self.bombs.index(bmb))
+                    else:
+                        if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
+                            if bmb.x + bmb.radius > self.__versus_player.hitbox[0] and bmb.x - bmb.radius < self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
+                                self.__versus_player.hit()
+                                self.bombs.pop(self.bombs.index(bmb))
 
-                if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
+                if bmb.x < 800 and bmb.x > 0:
                     bmb.x += bmb.velocity
                     bmb.update(50)
-                    if bmb.timeToExplode == 0:
+                    if bmb.timeToExplode <= 0:
                         bmb.explode(window)
                 else:
                     self.bombs.pop(self.bombs.index(bmb))
@@ -139,11 +154,33 @@ class Player(pygame.sprite.Sprite):
                     self.jumpHeight = 10
 
         else:
+            # basic timer pour les shoots un par un
+            if self.shootLoop > 0:
+                self.shootLoop += 1
+            if self.shootLoop > 5:
+                self.shootLoop = 0
+
             for bmb in self.bombs:
-                if bmb.x < 800 and bmb.x > 0 and bmb.timeToExplode > 0:
+
+                if self.__versus_player != None:
+                    if bmb.timeToExplode <= 0:
+                        if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
+                            if bmb.x + (40 * 5) > self.__versus_player.hitbox[0] and bmb.x - (40 * 5) < \
+                                    self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
+                                self.__versus_player.hit()
+                                self.bombs.pop(self.bombs.index(bmb))
+                    else:
+                        if bmb.y - bmb.radius < self.__versus_player.hitbox[1] + self.__versus_player.hitbox[3] and bmb.y + bmb.radius > self.__versus_player.hitbox[1]:
+                            if bmb.x + bmb.radius > self.__versus_player.hitbox[0] and bmb.x - bmb.radius < \
+                                    self.__versus_player.hitbox[0] + self.__versus_player.hitbox[2]:
+                                self.__versus_player.hit()
+                                self.bombs.pop(self.bombs.index(bmb))
+
+            for bmb in self.bombs:
+                if bmb.x < 800 and bmb.x > 0:
                     bmb.x += bmb.velocity
                     bmb.update(50)
-                    if bmb.timeToExplode == 0:
+                    if bmb.timeToExplode <= 0:
                         bmb.explode(window)
                 else:
                     self.bombs.pop(self.bombs.index(bmb))
@@ -152,11 +189,12 @@ class Player(pygame.sprite.Sprite):
             if self.right:
                 facing = 1
 
-            if keys[pygame.K_s]:
+            if keys[pygame.K_s] and self.shootLoop == 0:
                 intx = int(self.x + self.width // 2)
                 inty = int(self.y + self.height // 2)
                 if len(self.bombs) < 5:
                     self.bombs.append(bomb.Bomb(intx, inty, facing, 10, self.playerNumber))
+
 
             if keys[pygame.K_a] and self.x > self.velocity:
                 self.x -= self.velocity
