@@ -61,7 +61,7 @@ class Player(object):
                 else:
                     self.bombs.pop(self.bombs.index(bmb))
 
-            if keys[pygame.K_SPACE]:
+            if keys[pygame.K_DOWN]:
                 facing = 1
                 if self.left:
                     facing = -1
@@ -116,9 +116,9 @@ class Player(object):
                 else:
                     self.bombs.pop(self.bombs.index(bmb))
 
-            facing = 1
-            if self.left:
-                facing = -1
+            facing = -1
+            if self.right:
+                facing = 1
 
             if keys[pygame.K_s]:
                 intx = int(self.x + self.width // 2)
